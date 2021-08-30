@@ -1,5 +1,6 @@
 name: TPA
 main: ErosionYT\TPA\TPA
+author: ErosionYT
 version: 1.1
 api:
 - 3.0.0
