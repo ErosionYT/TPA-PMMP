@@ -2,31 +2,32 @@
 
 namespace ErosionYT\TPA\commands;
 
-use pocketmine\{
-    command\CommandSender, command\PluginCommand, plugin\Plugin, Server, Player, utils\TextFormat as C
-};
+use pocketmine\{command\Command,
+    command\CommandSender,
+    player\Player};
 
 use ErosionYT\TPA\TPA;
 
-class TPAcceptCommand extends PluginCommand{
+class TPAcceptCommand extends Command {
 
     public function __construct(TPA $owner){
-        parent::__construct("tpaccept", $owner);
-        $this->setDescription($this->getPlugin()->getConfig()->get("tpacceptCommandDescription"));
+        parent::__construct("tpaccept");
+        $this->setDescription($this->owner->getConfig()->get("tpacceptCommandDescription"));
         $this->setPermission("tpa.command");
+        $this->owner = $owner;
     }
 
     public function execute(CommandSender $player, string $commandLabel, array $args): bool{
         if($player instanceof Player){
-            if($this->getPlugin()->hasRequest($player)){
-                if($this->getPlugin()->teleporteeStillOnline($player)){
-                    if(isset($this->getPlugin()->tpaReq[$player->getName()]["teleport"])){
-                        $player->teleport(($teleportee = $this->getPlugin()->getTeleportee($player)));
+            if($this->owner->hasRequest($player)){
+                if($this->owner->teleporteeStillOnline($player)){
+                    if(isset($this->owner->tpaReq[$player->getName()]["teleport"])){
+                        $player->teleport(($teleportee = $this->owner->getTeleportee($player))->getPosition());
                     }else{
-                        ($teleportee = $this->getPlugin()->getTeleportee($player))->teleport($player);
+                        ($teleportee = $this->owner->getTeleportee($player))->teleport($player->getPosition());
                     }
 
-                    $this->getPlugin()->destroyRequest($player);
+                    $this->owner->destroyRequest($player);
 
                     $player->sendMessage("§6» §7You have teleported successfully");
 

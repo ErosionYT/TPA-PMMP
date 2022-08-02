@@ -7,7 +7,7 @@ use ErosionYT\TPA\commands\TPACommand;
 use ErosionYT\TPA\commands\TPADenyCommand;
 use ErosionYT\TPA\commands\TPAHereCommand;
 use pocketmine\{
-    plugin\PluginBase, Server, Player, utils\Config, utils\TextFormat as C
+    plugin\PluginBase, player\Player, utils\Config, utils\TextFormat as C
 };
 
 class TPA extends PluginBase{
@@ -18,7 +18,7 @@ class TPA extends PluginBase{
     /** @var string[] $tpaReq  */
     public $tpaReq = [];
 
-    public function onEnable(){
+    public function onEnable(): void{
         $this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML, [
             "time" => "SECONDS",
             "tpaExpireTime" => 30,
@@ -31,7 +31,7 @@ class TPA extends PluginBase{
         $this->initCommands();
     }
 
-    public function onDisable(){
+    public function onDisable() : void{
         $this->config->save();
     }
 
@@ -104,9 +104,9 @@ class TPA extends PluginBase{
     public function getTeleportee(Player $player): ?Player{
         if(isset($this->tpaReq[$player->getName()])){
             if(isset($this->tpaReq[$player->getName()]["teleport"])){
-                return $this->getServer()->getPlayer($this->tpaReq[$player->getName()]["teleport"]);
+                return $this->getServer()->getPlayerByPrefix($this->tpaReq[$player->getName()]["teleport"]);
             }else{
-                return $this->getServer()->getPlayer($this->tpaReq[$player->getName()]["teleportee"]);
+                return $this->getServer()->getPlayerByPrefix($this->tpaReq[$player->getName()]["teleportee"]);
             }
         }
         return null;
@@ -124,7 +124,7 @@ class TPA extends PluginBase{
      */
     private function updateRequest(Player $player): void{
         if(isset($this->tpaReq[$player->getName()])){
-            if($this->tpaReq[$player->getName()]["time"] + $this->getConfig()->get("tpaExpireTime") <= time()){
+            if($this->tpaReq[$player->getName()]["time"] - $this->getConfig()->get("tpaExpireTime") <= time()){
                 if(($teleportee = $this->getTeleportee($player)) !== null){
                     $teleportee->sendMessage("§6» §7Your §6TELEPORT §7request has expired");
                 }
