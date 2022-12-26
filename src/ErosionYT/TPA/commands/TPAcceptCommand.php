@@ -12,9 +12,9 @@ class TPAcceptCommand extends Command {
 
     public function __construct(TPA $owner){
         parent::__construct("tpaccept");
+        $this->owner = $owner;
         $this->setDescription($this->owner->getConfig()->get("tpacceptCommandDescription"));
         $this->setPermission("tpa.command");
-        $this->owner = $owner;
     }
 
     public function execute(CommandSender $player, string $commandLabel, array $args): bool{
