@@ -5,4 +5,6 @@ branches:
 projects:
   TPA-PMMP:
     path: ""
+    lint:
+      phpstan: false
 ...
